@@ -1,0 +1,65 @@
+service: myProject
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  stage: 'test'
+  apiGateway:
+    restApiId: !Ref ApiGateway
+    restApiRootResourceId: !GetAtt ApiGateway.RootResourceId
+  iamRoleStatements:
+    - Effect: Allow # / Deny
+      Action:
+        - s3:*
+        - dynamodb:*
+        - cognito-idp:*
+        - cognito-identity:*
+        - cloudsearch:*
+        - ssm:GetParameter
+        - cognito-idp:AdminCreateUser
+      Resource:
+        - '*'
+
+custom:
+  userPoolName: test-user-pool-${sls:stage}
+  userPoolClientName: test-user-pool-client-${sls:stage}
+  esbuild:
+    minify: true
+  developerStage: ${env:DEVELOPER_IDENTIFIER,'local'}
+
+resources:
+  Resources:
+      ApiGateway:
+        Type: AWS::ApiGateway::RestApi
+        Properties:
+          Name: 'test-api'
+
+functions:
+  getOfferings:
+    handler: index.handler
+    events:
+      - http:
+          path: /offerings
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - '*'
+  offeringsPremium:
+    handler: offeringFunctions/premium.offering
+    events:
+      - http:
+          path: /offeringsPremium/{id}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - '*'
+
