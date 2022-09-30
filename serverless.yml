@@ -62,4 +62,14 @@ functions:
             origin: '*'
             headers:
               - '*'
+  filterCategories:
+    handler: offeringFunctions/filter.filterCategories
+    events:
+      - http:
+          path: /filterCategories/
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - '*'
 
