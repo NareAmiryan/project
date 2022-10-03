@@ -4,7 +4,6 @@ import {getResponse} from "../helpers/getResponse"
 
 export const match = async (event)  =>{
     try {
-        console.log(event);
         let {structure_name,asset_class_id,strategy_name,sector_name} = JSON.parse(event.body);
         const object = offeringsPremium.map(elem => {
             return {
@@ -15,12 +14,9 @@ export const match = async (event)  =>{
                 sector_name: elem.sector_name
             }
         }).filter(item => {
-            console.log("structure name before" + structure_name)
-            console.log("item struct name " + item.structure_name);
             if(structure_name == "null"){
                 structure_name = item.structure_name
             }
-            console.log("structure name after" + structure_name);
             if(asset_class_id == "null"){
                 asset_class_id = item.asset_class_id
             }
@@ -31,7 +27,7 @@ export const match = async (event)  =>{
                 sector_name = item.sector_name
             }
             return item.sector_name == sector_name &&  item.structure_name == structure_name
-                && item.asset_class_id==asset_class_id && item.strategy_name == strategy_name;
+                && item.asset_class_id == asset_class_id && item.strategy_name == strategy_name;
         });
         return getResponse({
             data: object
