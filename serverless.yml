@@ -72,4 +72,14 @@ functions:
             origin: '*'
             headers:
               - '*'
+  matchCategories:
+    handler: offeringFunctions/matchCategories.match
+    events:
+      - http:
+          path: /matchCategories/
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - '*'
 
