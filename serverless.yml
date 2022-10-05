@@ -26,13 +26,34 @@ provider:
         - cognito-idp:AdminCreateUser
       Resource:
         - '*'
+  vpc: //from here
+    securityGroupIds:
+      - !Ref LambdaSecurityGroup
+    subnetIds:
+      - !Ref SubnetA
+      - !Ref SubnetB
+  environment:
+    DB_NAME: ${self:custom.DB_NAME}
+    DB_USER: ${self:custom.DB_USERNAME}
+    DB_PASS: ${self:custom.DB_PASSWORD}
+    DB_PORT: ${self:custom.DB_PORT}
+    DB_HOST: ${self:custom.PROXY_ENDPOINT}
 
 custom:
   userPoolName: test-user-pool-${sls:stage}
   userPoolClientName: test-user-pool-client-${sls:stage}
   esbuild:
     minify: true
-  developerStage: ${env:DEVELOPER_IDENTIFIER,'local'}
+  developerStage: ${env:DEVELOPER_IDENTIFIER,'test'}
+  //from here
+  DB_NAME: db_${self:provider.stage}
+  DB_USERNAME: postgres
+  DB_PASSWORD: nare12345
+  DB_PORT: !GetAtt RDSInstance.Endpoint.Port
+  PROXY_ENDPOINT: !GetAtt RDSProxy.Endpoint
+  PROXY_NAME: db-proxy-${self:provider.stage}
+  VPC_CIDR: 10
+
 
 resources:
   Resources:
