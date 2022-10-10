@@ -26,7 +26,7 @@ provider:
         - cognito-idp:AdminCreateUser
       Resource:
         - '*'
-  vpc: //from here
+  vpc:
     securityGroupIds:
       - !Ref LambdaSecurityGroup
     subnetIds:
@@ -43,9 +43,9 @@ custom:
   userPoolName: test-user-pool-${sls:stage}
   userPoolClientName: test-user-pool-client-${sls:stage}
   esbuild:
-    minify: true
+#    minify: true
+    minify: false
   developerStage: ${env:DEVELOPER_IDENTIFIER,'test'}
-  //from here
   DB_NAME: db_${self:provider.stage}
   DB_USERNAME: postgres
   DB_PASSWORD: nare12345
@@ -56,39 +56,23 @@ custom:
 
 
 resources:
-  Resources:
+  - ${file(VpcResources.yml)}
+  - ${file(RdsResources.yml)}
+  - ${file(RoutingResources.yml)}
+  - ${file(RdsProxyResources.yml)}
+  - Resources:
       ApiGateway:
         Type: AWS::ApiGateway::RestApi
         Properties:
           Name: 'test-api'
 
 functions:
-  getOfferings:
-    handler: index.handler
-    events:
-      - http:
-          path: /offerings
-          method: get
-          cors:
-            origin: '*'
-            headers:
-              - '*'
   offeringsPremium:
-    handler: offeringFunctions/premium.offering
+    handler: lambdas/offerings/premium.offeringsPremium
     events:
       - http:
-          path: /offeringsPremium/{id}
-          method: get
-          cors:
-            origin: '*'
-            headers:
-              - '*'
-  filterCategories:
-    handler: offeringFunctions/filter.filterCategories
-    events:
-      - http:
-          path: /filterCategories/
-          method: get
+          path: /offeringsPremium/
+          method: post
           cors:
             origin: '*'
             headers:

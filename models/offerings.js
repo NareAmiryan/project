@@ -1,12 +1,13 @@
 module.exports = function (sequelize, DataTypes) {
-    const offering = sequelize.define("offering", {
+    const Offering = sequelize.define("Offering", {
         unique_id:{
             type:DataTypes.UUID,
             allowNull:false
         },
         offering_id: {
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
             allowNull: false,
+            autoIncrement: true,
             primaryKey:true
         },
         offering_name: {
@@ -24,28 +25,28 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
         },
         sponsor_id:{
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
         },
         structure_id:{
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
         },
         offering_type_id:{
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
         },
         security_type_id:{
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
         },
         fundraising_type_id:{
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
         },
         asset_class_id:{
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
         },
         investor_requirement_id:{
-            type: DataTypes.INT,
+            type:DataTypes.INTEGER,
         },
         portfolio_type_id:{
-            type: DataTypes.INT,
+            type:DataTypes.INTEGER,
         },
         target_irr :{
             type: DataTypes.STRING,
@@ -60,10 +61,10 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
         },
         minimum_investment :{
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
         },
         offering_size :{
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
         },
         offering_fees :{
             type: DataTypes.STRING,
@@ -99,11 +100,72 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
         },
         premium_status_id :{
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
         },
         is_real :{
             type: DataTypes.BOOLEAN,
         },
-    })
-    return offering
+    });
+    Offering.associate = function(models) {
+        Offering.hasMany(models.OfferingJoinState, {
+            foreignKey: 'offering_id'
+        });
+    };
+    Offering.associate = function(models) {
+        Offering.hasMany(models.OfferingJoinSector, {
+            foreignKey: 'offering_id'
+        });
+    };
+    Offering.associate = function(models) {
+        Offering.hasMany(models.OfferingJoinStrategy, {
+            foreignKey: 'offering_id'
+        });
+    };
+
+    Offering.associate = function(models) {
+        Offering.belongsTo(models.Structure, {
+            foreignKey: 'structure_id'
+        });
+    };
+    Offering.associate = function(models) {
+        Offering.belongsTo(models.SecurityType, {
+            foreignKey: 'security_type_id'
+        });
+    };
+    Offering.associate = function(models) {
+        Offering.belongsTo(models.AssetClass, {
+            foreignKey: 'asset_class_id'
+        });
+    };
+    Offering.associate = function(models) {
+        Offering.belongsTo(models.PortfolioType, {
+            foreignKey: 'portfolio_type_id'
+        });
+    };
+    Offering.associate = function(models) {
+        Offering.belongsTo(models.PremiumStatus, {
+            foreignKey: 'premium_status_id'
+        });
+    };
+    Offering.associate = function(models) {
+        Offering.belongsTo(models.InvestorRequirement, {
+            foreignKey: 'investor_requirement_id'
+        });
+    };
+    Offering.associate = function(models) {
+        Offering.belongsTo(models.FundraisingStatus, {
+            foreignKey: 'fundraising_status_id'
+        });
+    }
+    Offering.associate = function(models) {
+        Offering.belongsTo(models.OfferingType, {
+            foreignKey: 'offering_type_id'
+        });
+    };
+    Offering.associate = function(models) {
+        Offering.belongsTo(models.Sponsor, {
+            foreignKey: 'sponsor_id'
+        });
+    };
+    return Offering
 };
